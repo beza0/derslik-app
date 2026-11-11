@@ -55,6 +55,26 @@ export class RemindersService implements OnModuleInit, OnModuleDestroy {
       });
       sent++;
     }
+    // Son tarihi 24 saat içinde olan ve henüz teslim edilmemiş ödevler.
+    const dueUntil = new Date(now.getTime() + 24 * 3600_000);
+    const due = await this.db.execute<{ id: string; workspace_id: string; title: string; student_id: string; due_at: Date }>(sql`
+      SELECT a.id, a.workspace_id, a.title, r.student_id, a.due_at
+      FROM assignment a JOIN assignment_recipient r ON r.assignment_id = a.id
+      WHERE a.status = 'published' AND a.due_at > ${now} AND a.due_at <= ${dueUntil}
+        AND r.status IN ('assigned', 'resubmit_requested')`);
+    for (const d of due.rows) {
+      const users = await this.notifications.recipientsForStudents(this.db, [d.student_id]);
+      await this.notifications.notify(this.db, users, {
+        workspaceId: d.workspace_id,
+        category: 'reminder',
+        type: 'assignment.due_soon',
+        titleKey: 'notif.assignment.dueSoon',
+        params: { title: d.title },
+        link: `/assignments/${d.id}`,
+        dedupeKey: `assignment.due:${d.id}:${d.student_id}:${new Date(d.due_at).toISOString()}`,
+      });
+      sent++;
+    }
     return sent;
   }
 }

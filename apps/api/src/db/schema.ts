@@ -296,6 +296,8 @@ export const fileObject = pgTable('file_object', {
   mime: text('mime').notNull(),
   sizeBytes: integer('size_bytes').notNull(),
   purpose: text('purpose').$type<FilePurpose>().notNull(),
+  status: text('status').$type<'pending' | 'ready' | 'rejected'>().notNull().default('pending'),
+  readyAt: ts('ready_at'),
   createdAt: createdAt(),
 });
 

@@ -16,6 +16,14 @@ const Env = z
     PAYMENT_PROVIDER: z.enum(['sandbox']).default('sandbox'),
     PAYMENT_WEBHOOK_SECRET: z.string().min(16).default('dev-only-sandbox-webhook-secret'),
     STORAGE_DIR: z.string().default('.uploads'),
+    STORAGE_DRIVER: z.enum(['local', 'supabase']).default('local'),
+    STORAGE_BUCKET: z.string().default('derslik-private'),
+    SUPABASE_URL: z.string().optional(),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+    /** API'nin dışarıdan erişilen adresi (yerel dosya bağlantıları için). */
+    API_PUBLIC_URL: z.string().default('http://localhost:3000'),
+    /** Zamanlanmış işleri (hatırlatmalar) tetikleyen dış çağrının sırrı. */
+    CRON_SECRET: z.string().min(16).optional(),
     MAIL_MODE: z.enum(['console', 'file']).default('console'),
     COOKIE_SECURE: z
       .enum(['true', 'false'])
@@ -33,6 +41,9 @@ const Env = z
       if (!env.COOKIE_SECURE) {
         ctx.addIssue({ code: 'custom', message: 'Üretimde COOKIE_SECURE=true olmalı', path: ['COOKIE_SECURE'] });
       }
+    }
+    if (env.STORAGE_DRIVER === 'supabase' && (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY)) {
+      ctx.addIssue({ code: 'custom', message: 'Supabase depolama için SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY gerekli', path: ['STORAGE_DRIVER'] });
     }
     if (env.AI_PROVIDER === 'anthropic' && !env.ANTHROPIC_API_KEY) {
       ctx.addIssue({ code: 'custom', message: 'ANTHROPIC_API_KEY gerekli', path: ['ANTHROPIC_API_KEY'] });

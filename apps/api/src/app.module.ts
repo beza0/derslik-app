@@ -27,6 +27,14 @@ import { NotificationsController } from './notifications/notifications.controlle
 import { RemindersService } from './notifications/reminders.service';
 import { PortalService } from './portal/portal.service';
 import { ChangeRequestsController, PortalController } from './portal/portal.controller';
+import { FilesService } from './files/files.service';
+import { FilesController } from './files/files.controller';
+import { STORAGE, createStorage } from './files/storage';
+import { NotesService } from './notes/notes.service';
+import { NotesController } from './notes/notes.controller';
+import { AssignmentsService } from './assignments/assignments.service';
+import { AssignmentsController } from './assignments/assignments.controller';
+import { CronController } from './notifications/cron.controller';
 
 @Global()
 @Module({})
@@ -52,6 +60,10 @@ export class AppModule {
         ChangeRequestsController,
         PortalController,
         NotificationsController,
+        FilesController,
+        NotesController,
+        AssignmentsController,
+        CronController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -73,6 +85,10 @@ export class AppModule {
         NotificationsService,
         RemindersService,
         PortalService,
+        { provide: STORAGE, useValue: createStorage(config) },
+        FilesService,
+        NotesService,
+        AssignmentsService,
       ],
       exports: [CONFIG, DB, AccessService, EntitlementsService, MailService],
     };

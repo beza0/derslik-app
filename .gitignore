@@ -15,3 +15,4 @@ apps/mobile/android/
 apps/mobile/ios/
 .DS_Store
 *.tsbuildinfo
+.uploads-test/

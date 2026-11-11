@@ -37,7 +37,7 @@
 
 | # | Karar | Durum |
 |---|---|---|
-| A1 | Sağlayıcı: Anthropic Claude API (`claude-sonnet-5-5` varsayılan; yapılandırılabilir). Anahtar yalnızca sunucuda. | ONAYLI |
+| A1 | Sağlayıcı: Anthropic Claude API (`claude-opus-5-5` varsayılan, `AI_MODEL` ile değiştirilebilir; reddetme durumunda sunucu taraflı yedek model). Anahtar yalnızca sunucuda. | ONAYLI |
 | A2 | Geliştirme/test için `AI_PROVIDER=fake` — deterministik, açıkça etiketli. Üretimde `fake` ayarı başlatmayı engeller. | KESİN |
 | A3 | Ses: cihazın kendi konuşma tanıma servisi (mobil: iOS/Android yerel, web: Web Speech API destekleyen tarayıcılar). Metin gönderimden önce düzenlenebilir. Desteklenmeyen tarayıcıda yalnızca yazılı giriş. | ONAYLI |
 | A4 | AI yalnızca tanımlı araçları (tool) çağırır. Okuma araçları doğrudan; yazma araçları `ai_action` kaydı oluşturur (önizleme) → kullanıcı onayı → sunucu yeniden doğrular → uygular. | KESİN |

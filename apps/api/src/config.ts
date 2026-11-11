@@ -12,7 +12,7 @@ const Env = z
     CORS_ORIGINS: z.string().default('http://localhost:5173,http://localhost:8081'),
     AI_PROVIDER: z.enum(['fake', 'anthropic', 'disabled']).default('fake'),
     ANTHROPIC_API_KEY: z.string().optional(),
-    AI_MODEL: z.string().default('claude-sonnet-5-5'),
+    AI_MODEL: z.string().default('claude-opus-5-5'),
     PAYMENT_PROVIDER: z.enum(['sandbox', 'disabled']).default('sandbox'),
     /** Canlı demo ortamında sandbox'a açıkça izin verir (arayüzde "TEST MODU" gösterilir). */
     ALLOW_SANDBOX_IN_PRODUCTION: z

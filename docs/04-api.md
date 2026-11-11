@@ -48,44 +48,51 @@ Durum: ✅ uygulandı ve testli · 🚧 sıradaki
 |---|---|---|
 | POST | `/billing/checkout`, `/billing/webhooks/:provider` 🚧 | Sandbox sağlayıcı, imza doğrulama, idempotent olaylar. |
 
+
 ## Gruplar ✅
-| GET/POST |  | Oluşturma üyelerle; arşivli gruplar . |
+| Yöntem | Yol | Not |
 |---|---|---|
-| GET/PATCH |  | Üyeler dahil. |
-| POST | ,  | |
-| POST |  | Hiçbir şey yazmaz: etkilenecek gelecek dersler ve açık ödevler. |
-| POST |  | . Geçmiş katılım değişmez; teslim yapılmış ödev kaydı silinmez. |
+| GET/POST | `/groups` | Oluşturma üyelerle; arşivli gruplar için `?archived=true`. |
+| GET/PATCH | `/groups/:id` | Üyeler dahil. |
+| POST | `/groups/:id/archive`, `/groups/:id/unarchive` | |
+| POST | `/groups/:id/members/preview` | Hiçbir şey yazmaz: etkilenecek gelecek dersler ve açık ödevler. |
+| POST | `/groups/:id/members` | `{ add, remove, applyToFutureLessons, applyToOpenAssignments }`. Geçmiş katılım değişmez; teslim yapılmış ödev kaydı silinmez. |
 
 ## Takvim ✅ (öğretmen)
-| GET |  | En fazla 100 günlük aralık. |
+| Yöntem | Yol | Not |
 |---|---|---|
-| POST |  | Tek ders veya . Tek işlem: bir oturum çakışırsa hiçbiri kaydedilmez (, çakışan tarihler ). Yanıt : öğrencinin başka öğretmenle çakışan tarihleri (ayrıntısız, engellemez). |
-| GET/PATCH |  | . |
-| POST |  |  ile. İptal edilen ders çakışma kontrolünde yer tutmaz. |
-| POST |  | İşlenen konu, sonraki plan, katılımcı bazlı yoklama. |
-| PUT |  | |
-| GET |  | Profil sekmesi. |
+| GET | `/calendar?from&to&studentId&groupId&status` | En fazla 100 günlük aralık. |
+| POST | `/lessons` | Tek ders veya `recurrence: { weekdays, untilDate \| count }`. Tek işlem: bir oturum çakışırsa hiçbiri kaydedilmez (`LESSON_CONFLICT`, çakışan tarihler `details.conflicts`). Yanıttaki `warnings`: öğrencinin başka öğretmenle çakışan tarihleri (ayrıntısız, engellemez). |
+| GET/PATCH | `/lessons/:id` | `scope: this \| this_and_following`. |
+| POST | `/lessons/:id/cancel` | `scope` ile. İptal edilen ders çakışma kontrolünde yer tutmaz. |
+| POST | `/lessons/:id/complete` | İşlenen konu, sonraki plan, katılımcı bazlı yoklama. |
+| PUT | `/lessons/:id/attendance/:studentId` | |
+| GET | `/students/:id/lessons?when=upcoming\|past` | Profil sekmesi. |
 
 ## Talepler ✅
-| GET |  | Öğretmen. |
+| Yöntem | Yol | Not |
 |---|---|---|
-| POST |  | ; erteleme onayı çakışma kontrollü, başarısızsa talep beklemede kalır. |
+| GET | `/change-requests?status=` | Öğretmen. |
+| POST | `/change-requests/:id/decide` | `approve \| reject`; erteleme onayı çakışma kontrollü, başarısızsa talep beklemede kalır. |
 
 ## Öğrenci/veli portalı ✅
-| GET |  | Birden çok öğretmenin dersleri birlikte; öğretmen notu, işlenen konu, diğer grup üyeleri modelde yok. |
+| Yöntem | Yol | Not |
 |---|---|---|
-| GET |  | |
-| POST |  | . Veli için  gerekir. |
-| GET | , POST  | |
+| GET | `/portal/calendar?from&to&studentId` | Birden çok öğretmenin dersleri birlikte; öğretmen notu, işlenen konu, diğer grup üyeleri modelde yok. |
+| GET | `/portal/lessons/:id` | |
+| POST | `/portal/lessons/:id/change-requests` | `{ studentId, kind, proposedStartsAt?, message? }`. Veli için `canRequestChanges` gerekir. |
+| GET | `/portal/change-requests` | Kendi talepleri. |
+| POST | `/portal/change-requests/:id/withdraw` | |
 
 ## Bildirimler ✅
-| GET |  | Sayfalı. Metinler i18n anahtarı + parametre; özel içerik yok. |
+| Yöntem | Yol | Not |
 |---|---|---|
-| GET |  | |
-| POST |  |  veya  |
-| GET/PUT |  | Kategori bazlı;  kapatılamaz. |
+| GET | `/notifications?cursor&limit&unread` | Sayfalı. Metinler i18n anahtarı + parametre; özel içerik yok. |
+| GET | `/notifications/unread-count` | |
+| POST | `/notifications/read` | `{ ids }` veya `{ all: true }` |
+| GET/PUT | `/notifications/prefs` | Kategori bazlı; `system` kapatılamaz. |
 
-Hatırlatmalar: her 5 dakikada 60 dk içindeki dersler;  ile tek sefer.
+Hatırlatmalar: her 5 dakikada önümüzdeki 60 dakikadaki dersler taranır; `dedupe_key` ile her olay bir kez bildirilir.
 
 ## Sıradaki modüller 🚧
-Notlar (), değerlendirmeler (), ödevler (, ), dosyalar (), materyaller (), AI (, ), abonelik ödeme akışı, yönetim ().
+Notlar (`/notes`), değerlendirmeler (`/assessments`), ödevler (`/assignments`, `/submissions`), dosyalar (`/files`), materyaller (`/materials`), AI (`/ai/messages`, `/ai/actions/:id`), abonelik ödeme akışı, yönetim (`/admin/*`).

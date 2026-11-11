@@ -17,6 +17,16 @@ import { StudentsController } from './students/students.controller';
 import { InvitesService } from './invites/invites.service';
 import { InvitesController } from './invites/invites.controller';
 import { HealthController } from './health.controller';
+import { GroupsService } from './groups/groups.service';
+import { GroupsController } from './groups/groups.controller';
+import { LessonsService } from './lessons/lessons.service';
+import { LessonsController } from './lessons/lessons.controller';
+import { ChangeRequestsService } from './lessons/change-requests.service';
+import { NotificationsService } from './notifications/notifications.service';
+import { NotificationsController } from './notifications/notifications.controller';
+import { RemindersService } from './notifications/reminders.service';
+import { PortalService } from './portal/portal.service';
+import { ChangeRequestsController, PortalController } from './portal/portal.controller';
 
 @Global()
 @Module({})
@@ -37,6 +47,11 @@ export class AppModule {
         StudentsController,
         InvitesController,
         BillingController,
+        GroupsController,
+        LessonsController,
+        ChangeRequestsController,
+        PortalController,
+        NotificationsController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -52,6 +67,12 @@ export class AppModule {
         AuthService,
         StudentsService,
         InvitesService,
+        GroupsService,
+        LessonsService,
+        ChangeRequestsService,
+        NotificationsService,
+        RemindersService,
+        PortalService,
       ],
       exports: [CONFIG, DB, AccessService, EntitlementsService, MailService],
     };

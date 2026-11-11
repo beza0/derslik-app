@@ -92,6 +92,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       // Ayrıntı yalnızca sunucu günlüğüne; istemciye genel mesaj. Günlüğe istek gövdesi yazılmaz.
       const err = exception as Error;
       this.logger.error(`${err?.name ?? 'Error'}: ${err?.message ?? String(exception)}`, err?.stack);
+      if (process.env.DEBUG_ERRORS) console.error(exception);
       body = { error: { code: ErrorCode.INTERNAL, message: 'Beklenmeyen bir hata oluştu' } };
     }
     res.status(status).json(body);

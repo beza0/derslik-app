@@ -1,6 +1,6 @@
 # Görev Listesi
 
-Güncelleme: 2026-11-12. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış engel
+Güncelleme: 2026-11-13. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış engel
 
 ## Faz A — Analiz
 - ✅ Ürün gereksinimleri, rol-yetki matrisi, iş kuralları, kabul senaryoları (`01`)
@@ -20,12 +20,12 @@ Güncelleme: 2026-11-12. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış en
 - ✅ Çalışma alanı ayrımı (AccessService), aktif öğrenci limiti (satır kilidi)
 - ✅ Öğrenci CRUD, arşiv, kalıcı silme, toplu ekleme
 - ✅ Davet: öğrenci/veli, yenileme, iptal, önizleme, idempotent kabul, bağlantı düzeltme, grup toplu davet
-- ⬜ Gruplar + üyelik değişikliği önizlemesi
-- ⬜ Takvim: tekil/haftalık seri, "yalnızca bu / bu ve sonraki", çakışma, saat dilimi + yaz saati testleri
-- ⬜ Ders tamamlama, yoklama, iptal/erteleme talepleri
+- ✅ Gruplar + üyelik değişikliği önizlemesi (gelecek ders/açık ödev seçimli)
+- ✅ Takvim: tekil/haftalık seri, "yalnızca bu / bu ve sonraki", çakışma (DB kısıtı), saat dilimi + yaz saati testleri
+- ✅ Ders tamamlama, yoklama, iptal/erteleme talepleri; öğrenci/veli takvim portalı
 - ⬜ Notlar, değerlendirmeler, görünürlük; öğrenci/veli portal API'si
 - ⬜ Ödevler, cevap anahtarı, teslim sürümleri, geri bildirim; dosya depolama
-- ⬜ Bildirim merkezi + zamanlanmış hatırlatmalar
+- 🔄 Bildirim merkezi + ders hatırlatmaları ✅ (ödev olayları ödev modülüyle)
 - ⬜ AI araçları, önizleme/onay, kota, fake + Anthropic sağlayıcı, belge okuma, ses (istemci)
 - ⬜ Abonelik: sandbox sağlayıcı, webhook, plan sürümleri, limit üstü durum
 - ⬜ Yönetim paneli API + destek erişimi
@@ -33,7 +33,7 @@ Güncelleme: 2026-11-12. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış en
 - ⬜ Mobil uygulama (Expo; öğretmen, öğrenci, veli)
 
 ## Faz D — Doğrulama
-- ✅ API entegrasyon testleri: AS-1 (kısmi), AS-2, AS-3, AS-4 — 24 test, gerçek PostgreSQL
+- ✅ API testleri: AS-2, AS-3, AS-4, AS-5 (ders kısmı), AS-6, AS-7; AS-1 ve AS-8 kısmi — 51 test, gerçek PostgreSQL
 - ⬜ Diğer kabul senaryoları, web e2e, Android emülatör doğrulaması
 
 ## Faz E — GitHub ve kurulum

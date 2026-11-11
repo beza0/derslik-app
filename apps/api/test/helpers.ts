@@ -67,3 +67,34 @@ export async function register(ctx: TestCtx, role: 'teacher' | 'member' = 'teach
   const me = await ctx.http().get('/api/me').set('Authorization', `Bearer ${token}`);
   return { email, token, userId: me.body.user.id, auth: { Authorization: `Bearer ${token}` } };
 }
+
+/** Test için çalışma alanını daha yüksek limitli bir plana geçirir (ödeme akışı ayrı test edilir). */
+export async function upgrade(ctx: TestCtx, t: Account, limit = 10): Promise<void> {
+  const { sql, eq } = await import('drizzle-orm');
+  const { planVersion, subscription, workspace } = await import('../src/db/schema');
+  const [ws] = await ctx.db.select().from(workspace).where(eq(workspace.ownerUserId, t.userId));
+  const planId = (await ctx.db.execute<{ id: string }>(sql`SELECT id FROM plan WHERE code = 'pro_draft'`)).rows[0]!.id;
+  const [v] = await ctx.db
+    .insert(planVersion)
+    .values({ planId, version: 100 + Math.floor(Math.random() * 1e9), activeStudentLimit: limit, aiMonthlyQuota: 100, isCurrent: false })
+    .returning();
+  await ctx.db
+    .update(subscription)
+    .set({ planVersionId: v!.id, status: 'active', currentPeriodEnd: new Date(Date.now() + 30 * 864e5) })
+    .where(eq(subscription.workspaceId, ws!.id));
+}
+
+/** Öğrenci kaydı oluşturur ve isteğe bağlı olarak yeni bir üye hesabını davetle bağlar. */
+export async function studentWithAccount(ctx: TestCtx, t: Account, name: string) {
+  const s = (await ctx.http().post('/api/students').set(t.auth).send({ displayName: name })).body;
+  const inv = (await ctx.http().post(`/api/students/${s.id}/invites`).set(t.auth).send({ kind: 'student' })).body;
+  const acc = await register(ctx, 'member', name);
+  await ctx.http().post('/api/invites/accept').set(acc.auth).send({ code: inv.code });
+  return { student: s as { id: string; displayName: string }, account: acc };
+}
+
+export async function linkAccount(ctx: TestCtx, t: Account, studentId: string, acc: Account, kind: 'student' | 'guardian' = 'student', canRequestChanges = false) {
+  const inv = (await ctx.http().post(`/api/students/${studentId}/invites`).set(t.auth).send({ kind, canRequestChanges })).body;
+  const res = await ctx.http().post('/api/invites/accept').set(acc.auth).send({ code: inv.code });
+  if (res.status !== 200) throw new Error(`accept failed ${res.status} ${JSON.stringify(res.body)}`);
+}

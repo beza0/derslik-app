@@ -18,6 +18,9 @@
 | P10 | Davet geçerlilik süresi varsayılan 7 gün; yenilenebilir; tek kullanımlık. | VARSAYIM | |
 | P11 | Ders hatırlatması varsayılan 60 dk önce, kullanıcı kapatabilir. | VARSAYIM | Yalnızca uygulama içi bildirim. |
 | P12 | Kalıcı öğrenci silme: öğrenci kaydı ve ona ait not, değerlendirme, ödev alıcı kaydı, teslim ve dosyalar silinir. Grup dersinde katılımcı kaydı silinir, ders kalır. 1:1 dersler silinir. Hesap bağlantıları kopar; öğrenci hesabı silinmez. | VARSAYIM | Açık onay ve öğrenci adını yazarak doğrulama ister. |
+| P14 | "Bu ve sonraki" seri düzenlemesi: tekil düzenlenmiş, yapılmış ve iptal edilmiş dersler korunur. Adetle sınırlı seride korunan dersler kalan oturum hakkından düşer (seri toplamı değişmez); tarihle sınırlı seride bitiş tarihi geçerlidir. Değiştirilen dersler silinip yeniden üretilir; bunlara bağlı bekleyen talepler kapanır. | VARSAYIM | Öngörülebilir toplam ders sayısı. |
+| P15 | Seri düzenlemesinde tarih değil haftanın günleri değişir; tek dersin tarihi "yalnızca bu" ile değişir. | VARSAYIM | |
+| P16 | İşlenen konu ve sonraki ders planı öğretmene özeldir; öğrenciyle paylaşım not/değerlendirme görünürlüğüyle yapılır. | VARSAYIM | Varsayılan güvenli. |
 | P13 | Aynı kişinin birden fazla rolü: `user` tek, rol yetkileri bağlantılardan türetilir (`teacher_workspace` sahibi → öğretmen; `student_link` → öğrenci; `guardian_link` → veli; `is_admin` bayrağı → yönetici). İstemci "aktif bağlam" seçer. İlk sürüm UI'ı tek bağlamla açılır. | VARSAYIM | Genişletilebilir, karmaşık değil. |
 
 ## Abonelik ve ödeme

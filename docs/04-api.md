@@ -48,5 +48,44 @@ Durum: ✅ uygulandı ve testli · 🚧 sıradaki
 |---|---|---|
 | POST | `/billing/checkout`, `/billing/webhooks/:provider` 🚧 | Sandbox sağlayıcı, imza doğrulama, idempotent olaylar. |
 
+## Gruplar ✅
+| GET/POST |  | Oluşturma üyelerle; arşivli gruplar . |
+|---|---|---|
+| GET/PATCH |  | Üyeler dahil. |
+| POST | ,  | |
+| POST |  | Hiçbir şey yazmaz: etkilenecek gelecek dersler ve açık ödevler. |
+| POST |  | . Geçmiş katılım değişmez; teslim yapılmış ödev kaydı silinmez. |
+
+## Takvim ✅ (öğretmen)
+| GET |  | En fazla 100 günlük aralık. |
+|---|---|---|
+| POST |  | Tek ders veya . Tek işlem: bir oturum çakışırsa hiçbiri kaydedilmez (, çakışan tarihler ). Yanıt : öğrencinin başka öğretmenle çakışan tarihleri (ayrıntısız, engellemez). |
+| GET/PATCH |  | . |
+| POST |  |  ile. İptal edilen ders çakışma kontrolünde yer tutmaz. |
+| POST |  | İşlenen konu, sonraki plan, katılımcı bazlı yoklama. |
+| PUT |  | |
+| GET |  | Profil sekmesi. |
+
+## Talepler ✅
+| GET |  | Öğretmen. |
+|---|---|---|
+| POST |  | ; erteleme onayı çakışma kontrollü, başarısızsa talep beklemede kalır. |
+
+## Öğrenci/veli portalı ✅
+| GET |  | Birden çok öğretmenin dersleri birlikte; öğretmen notu, işlenen konu, diğer grup üyeleri modelde yok. |
+|---|---|---|
+| GET |  | |
+| POST |  | . Veli için  gerekir. |
+| GET | , POST  | |
+
+## Bildirimler ✅
+| GET |  | Sayfalı. Metinler i18n anahtarı + parametre; özel içerik yok. |
+|---|---|---|
+| GET |  | |
+| POST |  |  veya  |
+| GET/PUT |  | Kategori bazlı;  kapatılamaz. |
+
+Hatırlatmalar: her 5 dakikada 60 dk içindeki dersler;  ile tek sefer.
+
 ## Sıradaki modüller 🚧
-Gruplar (`/groups`), takvim (`/lessons`, `/calendar`), talepler (`/change-requests`), notlar (`/notes`), değerlendirmeler (`/assessments`), ödevler (`/assignments`, `/submissions`), dosyalar (`/files`), materyaller (`/materials`), bildirimler (`/notifications`), AI (`/ai/messages`, `/ai/actions/:id`), öğrenci/veli görünümü (`/portal/*`), yönetim (`/admin/*`).
+Notlar (), değerlendirmeler (), ödevler (, ), dosyalar (), materyaller (), AI (, ), abonelik ödeme akışı, yönetim ().

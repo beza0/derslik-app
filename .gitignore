@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+coverage/
+.expo/
+.pgdata/
+.pgdata-test/
+.uploads/
+.mail/
+*.log
+.env
+.env.*
+!.env.example
+apps/mobile/android/
+apps/mobile/ios/
+.DS_Store
+*.tsbuildinfo

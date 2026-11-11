@@ -1,0 +1,29 @@
+{
+  "name": "derslik",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Özel ders öğretmenleri için öğrenci, takvim, ödev ve AI asistan uygulaması (çalışma adı: Derslik)",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:shared": "npm run build -w @derslik/shared",
+    "db:local": "node scripts/local-db.mjs",
+    "db:migrate": "npm run db:migrate -w @derslik/api",
+    "db:seed": "npm run db:seed -w @derslik/api",
+    "dev:api": "npm run dev -w @derslik/api",
+    "dev:web": "npm run dev -w @derslik/web",
+    "dev:mobile": "npm run start -w @derslik/mobile",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "prettier": "^3.10.0",
+    "typescript": "~6.0.2"
+  }
+}

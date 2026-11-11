@@ -1,0 +1,14 @@
+# Yerel geliştirme veritabanı. Docker yoksa: npm run db:local
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: derslik
+      POSTGRES_PASSWORD: derslik_dev_only
+      POSTGRES_DB: derslik
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

@@ -13,7 +13,12 @@ const Env = z
     AI_PROVIDER: z.enum(['fake', 'anthropic', 'disabled']).default('fake'),
     ANTHROPIC_API_KEY: z.string().optional(),
     AI_MODEL: z.string().default('claude-sonnet-5-5'),
-    PAYMENT_PROVIDER: z.enum(['sandbox']).default('sandbox'),
+    PAYMENT_PROVIDER: z.enum(['sandbox', 'disabled']).default('sandbox'),
+    /** Canlı demo ortamında sandbox'a açıkça izin verir (arayüzde "TEST MODU" gösterilir). */
+    ALLOW_SANDBOX_IN_PRODUCTION: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((v) => v === 'true'),
     PAYMENT_WEBHOOK_SECRET: z.string().min(16).default('dev-only-sandbox-webhook-secret'),
     STORAGE_DIR: z.string().default('.uploads'),
     STORAGE_DRIVER: z.enum(['local', 'supabase']).default('local'),
@@ -35,7 +40,7 @@ const Env = z
       if (env.AI_PROVIDER === 'fake') {
         ctx.addIssue({ code: 'custom', message: 'Üretimde AI_PROVIDER=fake kullanılamaz', path: ['AI_PROVIDER'] });
       }
-      if (env.PAYMENT_PROVIDER === 'sandbox') {
+      if (env.PAYMENT_PROVIDER === 'sandbox' && !env.ALLOW_SANDBOX_IN_PRODUCTION) {
         ctx.addIssue({ code: 'custom', message: 'Üretimde sandbox ödeme sağlayıcısı kullanılamaz', path: ['PAYMENT_PROVIDER'] });
       }
       if (!env.COOKIE_SECURE) {

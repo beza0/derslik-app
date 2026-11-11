@@ -11,6 +11,7 @@ import type { AppConfig } from './config';
 export async function createApp(config: AppConfig, pool: Pool): Promise<NestExpressApplication> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule.forRoot(config, pool), {
     logger: config.NODE_ENV === 'test' ? false : ['log', 'warn', 'error'],
+    rawBody: true,
   });
   app.setGlobalPrefix('api');
   app.use(helmet());

@@ -120,6 +120,7 @@ export const checkoutSession = pgTable('checkout_session', {
   planVersionId: uuid('plan_version_id').notNull(),
   provider: text('provider').notNull(),
   status: text('status').$type<'pending' | 'completed' | 'failed' | 'expired'>().notNull().default('pending'),
+  completedAt: ts('completed_at'),
   createdAt: createdAt(),
 });
 
@@ -486,4 +487,12 @@ export const appSetting = pgTable('app_setting', {
   key: text('key').primaryKey(),
   value: jsonb('value').notNull(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+export const appError = pgTable('app_error', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  code: text('code').notNull(),
+  route: text('route'),
+  message: text('message'),
+  createdAt: createdAt(),
 });

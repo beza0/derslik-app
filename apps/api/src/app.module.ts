@@ -35,6 +35,9 @@ import { NotesController } from './notes/notes.controller';
 import { AssignmentsService } from './assignments/assignments.service';
 import { AssignmentsController } from './assignments/assignments.controller';
 import { CronController } from './notifications/cron.controller';
+import { BillingService } from './billing/billing.service';
+import { AdminService } from './admin/admin.service';
+import { AdminController, SupportAccessController } from './admin/admin.controller';
 
 @Global()
 @Module({})
@@ -64,6 +67,8 @@ export class AppModule {
         NotesController,
         AssignmentsController,
         CronController,
+        AdminController,
+        SupportAccessController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -89,6 +94,8 @@ export class AppModule {
         FilesService,
         NotesService,
         AssignmentsService,
+        BillingService,
+        AdminService,
       ],
       exports: [CONFIG, DB, AccessService, EntitlementsService, MailService],
     };

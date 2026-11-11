@@ -4,10 +4,14 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Inject,
   Logger,
+  Optional,
 } from '@nestjs/common';
 import { ErrorCode, type ApiErrorBody } from '@derslik/shared';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
+import { DB, type Db } from '../db/db';
+import { appError } from '../db/schema';
 import { ZodError } from 'zod';
 
 const STATUS: Record<ErrorCode, number> = {
@@ -56,6 +60,18 @@ export const forbidden = (msg = 'Bu işlem için yetkiniz yok') => new AppError(
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger('Errors');
+  constructor(@Optional() @Inject(DB) private readonly db?: Db) {}
+
+  /** Yalnızca teknik bilgi: hata adı ve rota şablonu. İstek gövdesi, parametre değerleri veya kullanıcı verisi yazılmaz. */
+  private record(host: ArgumentsHost, err: Error | undefined) {
+    if (!this.db) return;
+    const req = host.switchToHttp().getRequest<Request & { route?: { path?: string } }>();
+    const route = `${req.method} ${req.route?.path ?? 'unknown'}`;
+    this.db
+      .insert(appError)
+      .values({ code: err?.name ?? 'Error', route, message: (err?.message ?? '').replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, '[e-posta]').slice(0, 300) })
+      .catch(() => {});
+  }
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const res = host.switchToHttp().getResponse<Response>();
@@ -93,6 +109,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       const err = exception as Error;
       this.logger.error(`${err?.name ?? 'Error'}: ${err?.message ?? String(exception)}`, err?.stack);
       if (process.env.DEBUG_ERRORS) console.error(exception);
+      this.record(host, err);
       body = { error: { code: ErrorCode.INTERNAL, message: 'Beklenmeyen bir hata oluştu' } };
     }
     res.status(status).json(body);

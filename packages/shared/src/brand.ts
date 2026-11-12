@@ -1,5 +1,5 @@
-/** Ürün adı henüz kesinleşmedi; değiştirmek için yalnızca bu dosyayı düzenleyin. */
+/** Ürün adı: Dersio (kod içi paket adları @derslik/* olarak kalır). */
 export const BRAND = {
-  name: 'Derslik',
+  name: 'Dersio',
   tagline: 'Özel derslerin tek defteri',
 } as const;

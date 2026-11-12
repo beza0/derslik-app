@@ -4,11 +4,11 @@
     "preview": {
       "distribution": "internal",
       "android": { "buildType": "apk" },
-      "env": { "EXPO_PUBLIC_API_URL": "https://derslik.vercel.app" }
+      "env": { "EXPO_PUBLIC_API_URL": "https://dersio-app.vercel.app" }
     },
     "production": {
       "android": { "buildType": "app-bundle" },
-      "env": { "EXPO_PUBLIC_API_URL": "https://derslik.vercel.app" }
+      "env": { "EXPO_PUBLIC_API_URL": "https://dersio-app.vercel.app" }
     }
   }
 }

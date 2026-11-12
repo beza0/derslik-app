@@ -117,7 +117,7 @@ function Links({ student }: { student: StudentDto }) {
       {created && (
         <>
           <Alert tone="ok">Kod: {created.code}</Alert>
-          <Button kind="primary" title="Paylaş" onPress={() => Share.share({ message: `Derslik daveti: ${created.code}\n${API_URL}/invite/${created.code}` })} />
+          <Button kind="primary" title="Paylaş" onPress={() => Share.share({ message: `Dersio daveti: ${created.code}\n${API_URL}/invite/${created.code}` })} />
         </>
       )}
     </Card>

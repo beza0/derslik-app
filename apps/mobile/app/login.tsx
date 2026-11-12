@@ -24,7 +24,7 @@ export default function Login() {
     }
   };
   return (
-    <Screen title="Derslik">
+    <Screen title="Dersio">
       <T muted>Özel derslerin tek defteri</T>
       <Card>
         <Input label="E-posta" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" />

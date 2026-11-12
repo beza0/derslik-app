@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Derslik",
-    "slug": "derslik",
-    "scheme": "derslik",
+    "name": "Dersio",
+    "slug": "dersio",
+    "scheme": "dersio",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,6 +22,6 @@
       ["expo-speech-recognition", { "microphonePermission": "Asistana sesli komut vermek için mikrofon gerekir.", "speechRecognitionPermission": "Sesli komutu yazıya çevirmek için konuşma tanıma gerekir." }]
     ],
     "experiments": { "typedRoutes": false },
-    "extra": { "apiUrl": "https://derslik.vercel.app" }
+    "extra": { "apiUrl": "https://dersio-app.vercel.app" }
   }
 }

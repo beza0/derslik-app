@@ -1,6 +1,6 @@
 {
-  "name": "Derslik",
-  "short_name": "Derslik",
+  "name": "Dersio",
+  "short_name": "Dersio",
   "description": "Özel derslerin tek defteri",
   "start_url": "/",
   "display": "standalone",

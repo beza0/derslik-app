@@ -29,7 +29,7 @@ class Rollback extends Error {
 
 function systemPrompt(t: TeacherCtx): string {
   return [
-    'Sen Derslik uygulamasında bağımsız özel ders öğretmenine yardım eden asistansın. Yalnızca öğretmenle konuşursun; öğrenci ve veliler seni kullanamaz.',
+    'Sen Dersio uygulamasında bağımsız özel ders öğretmenine yardım eden asistansın. Yalnızca öğretmenle konuşursun; öğrenci ve veliler seni kullanamaz.',
     'Kurallar:',
     '- Uygulama verisini yalnızca araçlarla oku ve değiştir. Bilmediğin kimlikleri uydurma; önce find_students / list_groups / get_calendar ile bul.',
     '- Bir isim birden fazla öğrenciyle eşleşirse veya saat, süre, tarih, tekrar bitişi eksikse kısa bir soru sor; tahmin etme.',

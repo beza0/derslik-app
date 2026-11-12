@@ -23,6 +23,9 @@ const config = {
   STORAGE_DRIVER: 'db',
   UPLOAD_MAX_BYTES: '4000000',
   MAIL_MODE: 'console',
+  APP_URL: 'https://dersio-app.vercel.app',
+  API_PUBLIC_URL: 'https://dersio-app.vercel.app',
+  CORS_ORIGINS: 'https://dersio-app.vercel.app',
 };
 const all = { ...config, ...secrets };
 for (const [name, value] of Object.entries(all)) {

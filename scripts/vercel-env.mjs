@@ -8,6 +8,8 @@ const secrets = Object.fromEntries(
   file.split(/\r?\n/).filter((l) => /^[A-Z_]+=/.test(l)).map((l) => [l.slice(0, l.indexOf('=')), l.slice(l.indexOf('=') + 1)]),
 );
 delete secrets.DB_APP_PASSWORD;
+// Hatırlatma sırrı Supabase Vault'ta (derslik_cron_secret) üretilir; API oradan okur.
+delete secrets.CRON_SECRET;
 if (!secrets.DATABASE_URL) {
   console.error('DATABASE_URL eksik: Supabase "Transaction pooler" bağlantı adresini dosyaya ekleyin.');
   process.exit(1);

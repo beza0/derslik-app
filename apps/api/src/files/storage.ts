@@ -1,4 +1,4 @@
-import { mkdirSync, existsSync, statSync, openSync, readSync, closeSync, rmSync } from 'node:fs';
+import { mkdirSync, existsSync, statSync, openSync, readSync, closeSync, rmSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import type { AppConfig } from '../config';
 import { hmacSha256, safeEqual } from '../common/crypto';
@@ -13,6 +13,8 @@ export interface StorageDriver {
   probe(key: string, bytes: number): Promise<{ size: number; head: Buffer } | null>;
   signedDownloadUrl(key: string, ttlSeconds: number, filename: string): Promise<string>;
   remove(key: string): Promise<void>;
+  /** Tüm içerik (AI belge okuma için; boyut yüklemede sınırlandı). */
+  read(key: string): Promise<Buffer>;
 }
 
 /** Geliştirme sürücüsü: diske yazar; yükleme/indirme API'deki imzalı uçlarla. */
@@ -83,6 +85,10 @@ export class LocalStorage implements StorageDriver {
   async remove(key: string) {
     rmSync(this.path(key), { force: true });
   }
+
+  async read(key: string) {
+    return readFileSync(this.path(key));
+  }
 }
 
 /** Supabase Storage (özel bucket) — REST API, servis anahtarı yalnızca sunucuda. */
@@ -132,6 +138,12 @@ export class SupabaseStorage implements StorageDriver {
     if (!res.ok) throw new Error(`storage sign download ${res.status}`);
     const body = (await res.json()) as { signedURL: string };
     return `${this.base}${body.signedURL}&download=${encodeURIComponent(filename)}`;
+  }
+
+  async read(key: string) {
+    const res = await fetch(`${this.base}/object/authenticated/${this.obj(key)}`, { headers: this.headers() });
+    if (!res.ok) throw new Error(`storage read ${res.status}`);
+    return Buffer.from(await res.arrayBuffer());
   }
 
   async remove(key: string) {

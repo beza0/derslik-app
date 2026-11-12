@@ -38,6 +38,9 @@ import { CronController } from './notifications/cron.controller';
 import { BillingService } from './billing/billing.service';
 import { AdminService } from './admin/admin.service';
 import { AdminController, SupportAccessController } from './admin/admin.controller';
+import { AiService } from './ai/ai.service';
+import { AiController } from './ai/ai.controller';
+import { AI_PROVIDER, createProvider } from './ai/provider';
 
 @Global()
 @Module({})
@@ -69,6 +72,7 @@ export class AppModule {
         CronController,
         AdminController,
         SupportAccessController,
+        AiController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -96,6 +100,8 @@ export class AppModule {
         AssignmentsService,
         BillingService,
         AdminService,
+        { provide: AI_PROVIDER, useValue: createProvider(config) },
+        AiService,
       ],
       exports: [CONFIG, DB, AccessService, EntitlementsService, MailService],
     };

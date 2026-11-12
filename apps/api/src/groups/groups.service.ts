@@ -51,8 +51,8 @@ export class GroupsService {
     return rows.map((r) => r.id);
   }
 
-  async create(t: TeacherCtx, input: GroupInput) {
-    return this.db.transaction(async (tx) => {
+  async create(t: TeacherCtx, input: GroupInput, existingTx?: Tx) {
+    const run = async (tx: Tx) => {
       await this.assertOwnActiveStudents(t, input.studentIds, tx);
       const [g] = await tx
         .insert(studentGroup)
@@ -62,7 +62,8 @@ export class GroupsService {
         await tx.insert(groupMembership).values([...new Set(input.studentIds)].map((studentId) => ({ groupId: g!.id, studentId })));
       }
       return this.detail(t, g!.id, tx);
-    });
+    };
+    return existingTx ? run(existingTx) : this.db.transaction(run);
   }
 
   async list(t: TeacherCtx, includeArchived = false) {

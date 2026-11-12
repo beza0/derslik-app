@@ -1,4 +1,6 @@
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { Pool, types } from 'pg';
 import * as schema from './schema';
 
@@ -17,7 +19,11 @@ export function createPool(url: string, max = 10): Pool {
   // DATABASE_CA_CERT (PEM) ile verilir. Yerel geliştirmede TLS yok.
   const local = /@(localhost|127\.0\.0\.1)[:/]/.test(url);
   // Ortam değişkeninde tek satır olarak saklanan PEM'deki "\n" dizilerini gerçek satır sonuna çevir.
-  const ca = process.env.DATABASE_CA_CERT?.replace(/\\n/g, '\n');
+  let ca = process.env.DATABASE_CA_CERT?.replace(/\\n/g, '\n');
+  // Supabase kendi kök sertifikasını kullanır; resmi "Supabase Root 2021 CA" repoda paketlidir.
+  if (!ca && /supabase\.(com|co)[:/]/.test(url)) {
+    ca = readFileSync(join(__dirname, '..', '..', 'certs', 'supabase-prod-ca-2021.crt'), 'utf8');
+  }
   return new Pool({ connectionString: url, max, ssl: local ? undefined : ca ? { ca } : true });
 }
 

@@ -4,7 +4,7 @@
   "buildCommand": "npm run build:shared && npm run build -w @derslik/api && npm run build -w @derslik/web",
   "outputDirectory": "apps/web/dist",
   "functions": {
-    "api/index.js": { "maxDuration": 60, "includeFiles": "apps/api/dist/**" }
+    "api/index.js": { "maxDuration": 60, "includeFiles": "apps/api/{dist,certs}/**" }
   },
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/index" },

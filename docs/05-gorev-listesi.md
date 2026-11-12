@@ -33,7 +33,7 @@ Güncelleme: 2026-11-12. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış en
 ## Faz D — Doğrulama
 - ✅ API: 78 entegrasyon/birim testi, gerçek PostgreSQL (AS-1…AS-14)
 - ✅ Web: tarayıcıda giriş, takvim, ders ekleme, AI önizleme/onay, öğrenci portalı, telefon görünümü
-- 🔄 Android APK derlemesi
+- ✅ Android APK derlemesi (EAS, preview profili)
 - ⬜ Android emülatörde uçtan uca deneme
 - ⛔ iOS: Windows'ta derlenemez (Apple hesabı ve macOS/EAS gerekir)
 

@@ -1,5 +1,6 @@
-import { mkdirSync, existsSync, statSync, openSync, readSync, closeSync, rmSync, readFileSync } from 'node:fs';
+import { mkdirSync, existsSync, statSync, openSync, readSync, closeSync, rmSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
+import type { Pool } from 'pg';
 import type { AppConfig } from '../config';
 import { hmacSha256, safeEqual } from '../common/crypto';
 
@@ -20,7 +21,7 @@ export interface StorageDriver {
 /** Geliştirme sürücüsü: diske yazar; yükleme/indirme API'deki imzalı uçlarla. */
 export class LocalStorage implements StorageDriver {
   private readonly root: string;
-  constructor(private readonly config: AppConfig) {
+  constructor(protected readonly config: AppConfig) {
     this.root = resolve(config.STORAGE_DIR);
   }
 
@@ -67,7 +68,7 @@ export class LocalStorage implements StorageDriver {
     return p;
   }
 
-  async probe(key: string, bytes: number) {
+  async probe(key: string, bytes: number): Promise<{ size: number; head: Buffer } | null> {
     const p = this.path(key);
     if (!existsSync(p)) return null;
     const size = statSync(p).size;
@@ -86,8 +87,12 @@ export class LocalStorage implements StorageDriver {
     rmSync(this.path(key), { force: true });
   }
 
-  async read(key: string) {
+  async read(key: string): Promise<Buffer> {
     return readFileSync(this.path(key));
+  }
+
+  async put(key: string, data: Buffer) {
+    writeFileSync(this.write(key), data);
   }
 }
 
@@ -117,7 +122,7 @@ export class SupabaseStorage implements StorageDriver {
     return { url: `${this.base}${body.url}`, method: 'PUT' as const, headers: { 'Content-Type': mime } };
   }
 
-  async probe(key: string, bytes: number) {
+  async probe(key: string, bytes: number): Promise<{ size: number; head: Buffer } | null> {
     const res = await fetch(`${this.base}/object/authenticated/${this.obj(key)}`, {
       headers: this.headers({ Range: `bytes=0-${bytes - 1}` }),
     });
@@ -140,7 +145,7 @@ export class SupabaseStorage implements StorageDriver {
     return `${this.base}${body.signedURL}&download=${encodeURIComponent(filename)}`;
   }
 
-  async read(key: string) {
+  async read(key: string): Promise<Buffer> {
     const res = await fetch(`${this.base}/object/authenticated/${this.obj(key)}`, { headers: this.headers() });
     if (!res.ok) throw new Error(`storage read ${res.status}`);
     return Buffer.from(await res.arrayBuffer());
@@ -151,10 +156,38 @@ export class SupabaseStorage implements StorageDriver {
   }
 }
 
+/**
+ * Sunucusuz ortam için: içerik PostgreSQL'de (bytea). Yükleme/indirme API'deki imzalı uçlardan geçer;
+ * bu nedenle tek dosya, barındırıcının istek gövdesi sınırıyla (Vercel ~4,5 MB) sınırlıdır.
+ */
+export class DbStorage extends LocalStorage {
+  constructor(config: AppConfig, private readonly pool: Pool) {
+    super(config);
+  }
+  override async put(key: string, data: Buffer) {
+    await this.pool.query('INSERT INTO file_blob (storage_key, data) VALUES ($1, $2) ON CONFLICT (storage_key) DO UPDATE SET data = EXCLUDED.data', [key, data]);
+  }
+  override async probe(key: string, bytes: number) {
+    const r = await this.pool.query<{ size: number; head: Buffer }>('SELECT octet_length(data) AS size, substring(data from 1 for $2) AS head FROM file_blob WHERE storage_key = $1', [key, bytes]);
+    const row = r.rows[0];
+    return row ? { size: Number(row.size), head: row.head } : null;
+  }
+  override async read(key: string) {
+    const r = await this.pool.query<{ data: Buffer }>('SELECT data FROM file_blob WHERE storage_key = $1', [key]);
+    if (!r.rows[0]) throw new Error('not found');
+    return r.rows[0].data;
+  }
+  override async remove(key: string) {
+    await this.pool.query('DELETE FROM file_blob WHERE storage_key = $1', [key]);
+  }
+}
+
 export const STORAGE = Symbol('STORAGE');
 
-export function createStorage(config: AppConfig): StorageDriver {
-  return config.STORAGE_DRIVER === 'supabase' ? new SupabaseStorage(config) : new LocalStorage(config);
+export function createStorage(config: AppConfig, pool: Pool): StorageDriver {
+  if (config.STORAGE_DRIVER === 'supabase') return new SupabaseStorage(config);
+  if (config.STORAGE_DRIVER === 'db') return new DbStorage(config, pool);
+  return new LocalStorage(config);
 }
 
 /** İçerik imzası: uzantıya/istemcinin söylediği türe güvenilmez. */

@@ -94,7 +94,7 @@ export class AppModule {
         NotificationsService,
         RemindersService,
         PortalService,
-        { provide: STORAGE, useValue: createStorage(config) },
+        { provide: STORAGE, useValue: createStorage(config, pool) },
         FilesService,
         NotesService,
         AssignmentsService,

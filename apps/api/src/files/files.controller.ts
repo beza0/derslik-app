@@ -1,8 +1,6 @@
 import { Body, Controller, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post, Put, Req, Res } from '@nestjs/common';
 import { FILE_LIMITS, ErrorCode } from '@derslik/shared';
 import type { Request, Response } from 'express';
-import { createReadStream, createWriteStream } from 'node:fs';
-import { pipeline } from 'node:stream/promises';
 import { z } from 'zod';
 import { CurrentUser, Public, type AuthUser } from '../common/auth';
 import { AppError } from '../common/errors';
@@ -52,15 +50,17 @@ export class FilesController {
     if (!(this.storage instanceof LocalStorage)) throw new AppError(ErrorCode.NOT_FOUND, 'Bulunamadı');
     const v = this.storage.verify(token, 'up');
     if (!v) throw new AppError(ErrorCode.FORBIDDEN, 'Bağlantı geçersiz veya süresi dolmuş');
+    const chunks: Buffer[] = [];
     let total = 0;
-    req.on('data', (c: Buffer) => {
+    for await (const c of req as AsyncIterable<Buffer>) {
       total += c.length;
-      if (total > FILE_LIMITS.maxBytes) req.destroy(new Error('too large'));
-    });
-    await pipeline(req, createWriteStream(this.storage.write(v.key)));
+      if (total > FILE_LIMITS.maxBytes) throw new AppError(ErrorCode.FILE_REJECTED, 'Dosya çok büyük');
+      chunks.push(c);
+    }
+    await this.storage.put(v.key, Buffer.concat(chunks));
   }
 
-  /** Yalnızca yerel geliştirme sürücüsü: imzalı indirme. */
+  /** Yerel/veritabanı sürücüsü: imzalı indirme. */
   @Public()
   @Get('local/:token')
   async localDownload(@Param('token') token: string, @Res() res: Response) {
@@ -69,6 +69,7 @@ export class FilesController {
     if (!v) throw new AppError(ErrorCode.FORBIDDEN, 'Bağlantı geçersiz veya süresi dolmuş');
     res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${v.extra}`);
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    createReadStream(this.storage.path(v.key)).pipe(res);
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.send(await this.storage.read(v.key));
   }
 }

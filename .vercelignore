@@ -1,0 +1,9 @@
+.pgdata
+.pgdata-test
+.uploads
+.uploads-test
+.mail
+apps/mobile
+**/.env
+**/.env.*
+!**/.env.example

@@ -21,7 +21,9 @@ const Env = z
       .transform((v) => v === 'true'),
     PAYMENT_WEBHOOK_SECRET: z.string().min(16).default('dev-only-sandbox-webhook-secret'),
     STORAGE_DIR: z.string().default('.uploads'),
-    STORAGE_DRIVER: z.enum(['local', 'supabase']).default('local'),
+    STORAGE_DRIVER: z.enum(['local', 'supabase', 'db']).default('local'),
+    /** Tek dosya üst sınırı; sunucusuz barındırmada istek gövdesi sınırına göre düşürülür. */
+    UPLOAD_MAX_BYTES: z.coerce.number().int().positive().max(15 * 1024 * 1024).default(15 * 1024 * 1024),
     STORAGE_BUCKET: z.string().default('derslik-private'),
     SUPABASE_URL: z.string().optional(),
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
@@ -58,6 +60,12 @@ const Env = z
 export type AppConfig = z.infer<typeof Env>;
 
 export function loadConfig(source: Record<string, string | undefined> = process.env): AppConfig {
+  // Vercel'de alan adı otomatik gelir: ayrıca girilmemişse uygulama/API adresi ve CORS buradan türetilir.
+  const host = source.VERCEL_PROJECT_PRODUCTION_URL;
+  if (host) {
+    const origin = `https://${host}`;
+    source = { APP_URL: origin, API_PUBLIC_URL: origin, CORS_ORIGINS: origin, ...source };
+  }
   const parsed = Env.safeParse(source);
   if (!parsed.success) {
     const issues = parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('\n');

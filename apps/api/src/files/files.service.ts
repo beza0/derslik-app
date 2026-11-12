@@ -7,6 +7,7 @@ import { AccessService } from '../common/access.service';
 import { AppError, forbidden, notFound } from '../common/errors';
 import { randomToken } from '../common/crypto';
 import { STORAGE, sniffMime, type StorageDriver } from './storage';
+import { CONFIG, type AppConfig } from '../config';
 
 const DOWNLOAD_TTL = 5 * 60;
 
@@ -27,6 +28,7 @@ export class FilesService {
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(STORAGE) private readonly storage: StorageDriver,
+    @Inject(CONFIG) private readonly config: AppConfig,
     private readonly access: AccessService,
   ) {}
 
@@ -34,8 +36,9 @@ export class FilesService {
     if (!(FILE_LIMITS.allowedMime as readonly string[]).includes(input.mime)) {
       throw new AppError(ErrorCode.FILE_REJECTED, 'Yalnızca fotoğraf (JPG, PNG, WEBP, HEIC) ve PDF yüklenebilir');
     }
-    if (input.size <= 0 || input.size > FILE_LIMITS.maxBytes) {
-      throw new AppError(ErrorCode.FILE_REJECTED, `Dosya en fazla ${FILE_LIMITS.maxBytes / 1024 / 1024} MB olabilir`);
+    const max = Math.min(FILE_LIMITS.maxBytes, this.config.UPLOAD_MAX_BYTES);
+    if (input.size <= 0 || input.size > max) {
+      throw new AppError(ErrorCode.FILE_REJECTED, `Dosya en fazla ${Math.floor((max / 1024 / 1024) * 10) / 10} MB olabilir`);
     }
   }
 

@@ -11,3 +11,4 @@ export * from './schemas/assignments';
 export * from './schemas/notifications';
 export * from './schemas/billing';
 export * from './schemas/ai';
+export * from './api-client';

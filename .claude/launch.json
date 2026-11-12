@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "api", "runtimeExecutable": "node", "runtimeArgs": ["apps/api/dist/main.js"], "port": 3000 },
+    { "name": "web", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "-w", "@derslik/web"], "port": 5173 }
+  ]
+}

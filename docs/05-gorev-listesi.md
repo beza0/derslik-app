@@ -1,6 +1,6 @@
 # Görev Listesi
 
-Güncelleme: 2026-11-13. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış engel
+Güncelleme: 2026-11-12. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış engel
 
 ## Faz A — Analiz
 - ✅ Ürün gereksinimleri, rol-yetki matrisi, iş kuralları, kabul senaryoları (`01`)
@@ -41,4 +41,7 @@ Güncelleme: 2026-11-13. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış en
 - ✅ GitHub: https://github.com/beza0/derslik-app
 - ✅ Supabase projesi (derslik, Frankfurt) oluşturuldu
 - ✅ Vercel projesi (derslik) oluşturuldu
-- ⛔ Canlıya alma: Supabase veritabanı adresi ve Vercel CLI girişi kullanıcıdan bekleniyor
+- ✅ Ürün adı: Dersio (kod içi paket adları `@derslik/*` olarak kaldı)
+- ✅ Canlı: https://dersio-app.vercel.app (Vercel, Frankfurt) + Supabase PostgreSQL; migration'lar ve paketler yüklendi
+- ✅ Hatırlatma cron'u (Supabase pg_cron + Vault sırrı) çalışıyor
+- ✅ Expo projesi: @beyzaacar/dersio

@@ -1,8 +1,8 @@
-# Derslik (çalışma adı)
+# Dersio
 
 Bağımsız özel ders öğretmenleri için öğrenci, grup, takvim, not, ödev ve AI asistan uygulaması. Web + iOS + Android.
 
-> Durum: çalışan ilk sürüm (API + web + Android). Ödeme test modunda; AI, API anahtarı girilene kadar kapalı. Ne bittiği ve ne kaldığı: [docs/05-gorev-listesi.md](docs/05-gorev-listesi.md).
+> Canlı: **https://dersio-app.vercel.app** · Durum: çalışan ilk sürüm (API + web + Android). Ödeme test modunda; AI, API anahtarı girilene kadar kapalı. Ne bittiği ve ne kaldığı: [docs/05-gorev-listesi.md](docs/05-gorev-listesi.md).
 
 ## Dokümanlar
 - [Ürün gereksinimleri, rol-yetki matrisi, kabul senaryoları](docs/01-urun-gereksinimleri.md)
@@ -82,15 +82,14 @@ Geliştirme (bilgisayarın yerel ağ adresiyle; sesli komut için geliştirme de
 ```bash
 cd apps/mobile && npx expo start
 ```
-Android APK:
+Android APK (Expo bulut derlemesi, ücretsiz kuyruk):
 ```bash
-cd apps/mobile && npx expo prebuild --platform android --clean && cd android && ./gradlew assembleRelease
+cd apps/mobile && npx eas-cli build -p android --profile preview
 ```
-Çıktı: `apps/mobile/android/app/build/outputs/apk/release/app-release.apk`. Windows'ta `JAVA_HOME` olarak Android Studio'nun `jbr` klasörü kullanılabilir. Yayın adresi `app.json > extra.apiUrl` (geliştirmede `EXPO_PUBLIC_API_URL`).
-Not: Bu APK Expo şablonunun hata ayıklama imzasıyla imzalanır; Google Play'e yüklemek için ayrı yükleme anahtarı oluşturulmalıdır.
+Windows'ta yerel Gradle derlemesi 260 karakter yol sınırına takıldığı için EAS kullanılır. Yayın adresi `eas.json` içindeki `EXPO_PUBLIC_API_URL` (geliştirmede `app.json > extra.apiUrl`). Google Play için `production` profili (AAB) kullanılır.
 
 ## Canlıya alma (Vercel + Supabase, ücretsiz katmanlar)
-- Tek Vercel projesi: web (statik) + `/api/*` sunucusuz fonksiyon (`vercel.json`).
+- Tek Vercel projesi (Frankfurt): web (statik) + `/api/*` sunucusuz fonksiyon (`vercel.json`). NestJS 12 yalnızca ESM olduğundan API, `apps/api/bundle.mjs` ile tek CommonJS dosyasına paketlenir.
 - Veritabanı: Supabase PostgreSQL. Tüm tablolarda RLS açık; Supabase Data API'den erişim kapalı (migration 0005).
 - Sırlar `apps/api/.env.production.local` dosyasında (repoya girmez). `DATABASE_URL` = Supabase *Transaction pooler* adresi.
 ```bash
@@ -105,7 +104,7 @@ node scripts/vercel-env.mjs
 ```bash
 npx vercel deploy --prod
 ```
-- Hatırlatmalar: Supabase pg_cron + pg_net 5 dakikada bir `/api/internal/cron/reminders` çağırır (sır Supabase Vault'ta üretilir).
+- Hatırlatmalar: Supabase pg_cron işi `derslik-reminders` 5 dakikada bir `/api/internal/cron/reminders` çağırır; sır Vault'ta (`derslik_cron_secret`) üretilir ve API oradan okur, Vercel'e konmaz.
 - Dosyalar sunucusuz kurulumda veritabanında tutulur (tek dosya en fazla ~4 MB). 15 MB için `STORAGE_DRIVER=supabase` + servis anahtarı.
 
 ## Bilinen sınırlamalar

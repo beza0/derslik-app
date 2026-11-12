@@ -8,20 +8,61 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#0f766e" },
-    "ios": { "bundleIdentifier": "app.derslik.mobile", "supportsTablet": true },
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f766e"
+    },
+    "ios": {
+      "bundleIdentifier": "app.derslik.mobile",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Sesli komutu yazıya çevirmek için konuşma tanıma gerekir.",
+        "NSMicrophoneUsageDescription": "Asistana sesli komut vermek için mikrofon gerekir."
+      }
+    },
     "android": {
       "package": "app.derslik.mobile",
-      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#0f766e" },
-      "permissions": ["android.permission.RECORD_AUDIO"]
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f766e"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      ["expo-image-picker", { "photosPermission": "Ödev fotoğrafı eklemek için galerinize erişim gerekir.", "cameraPermission": "Ödev fotoğrafı çekmek için kameraya erişim gerekir." }],
-      ["expo-speech-recognition", { "microphonePermission": "Asistana sesli komut vermek için mikrofon gerekir.", "speechRecognitionPermission": "Sesli komutu yazıya çevirmek için konuşma tanıma gerekir." }]
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Ödev fotoğrafı eklemek için galerinize erişim gerekir.",
+          "cameraPermission": "Ödev fotoğrafı çekmek için kameraya erişim gerekir."
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Asistana sesli komut vermek için mikrofon gerekir.",
+          "speechRecognitionPermission": "Sesli komutu yazıya çevirmek için konuşma tanıma gerekir."
+        }
+      ]
     ],
-    "experiments": { "typedRoutes": false },
-    "extra": { "apiUrl": "https://dersio-app.vercel.app" }
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "apiUrl": "https://dersio-app.vercel.app",
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "ff7a38da-0016-47b3-8e36-2f61c3a377fa"
+      }
+    },
+    "owner": "beyzaacar"
   }
 }

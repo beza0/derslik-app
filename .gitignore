@@ -16,3 +16,4 @@ apps/mobile/ios/
 .DS_Store
 *.tsbuildinfo
 .uploads-test/
+.vercel/

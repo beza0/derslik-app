@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Derslik",
+    "slug": "derslik",
+    "scheme": "derslik",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#0f766e" },
+    "ios": { "bundleIdentifier": "app.derslik.mobile", "supportsTablet": true },
+    "android": {
+      "package": "app.derslik.mobile",
+      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#0f766e" },
+      "permissions": ["android.permission.RECORD_AUDIO"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      ["expo-image-picker", { "photosPermission": "Ödev fotoğrafı eklemek için galerinize erişim gerekir.", "cameraPermission": "Ödev fotoğrafı çekmek için kameraya erişim gerekir." }],
+      ["expo-speech-recognition", { "microphonePermission": "Asistana sesli komut vermek için mikrofon gerekir.", "speechRecognitionPermission": "Sesli komutu yazıya çevirmek için konuşma tanıma gerekir." }]
+    ],
+    "experiments": { "typedRoutes": false },
+    "extra": { "apiUrl": "https://derslik.vercel.app" }
+  }
+}

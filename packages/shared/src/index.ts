@@ -12,3 +12,4 @@ export * from './schemas/notifications';
 export * from './schemas/billing';
 export * from './schemas/ai';
 export * from './api-client';
+export * from './i18n';

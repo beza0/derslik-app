@@ -8,7 +8,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
-    "prebuild": "expo prebuild --platform android --clean"
+    "prebuild": "expo prebuild --platform android --clean",
+    "eas-build-post-install": "npm run build -w @derslik/shared --prefix ../.."
   },
   "dependencies": {
     "@derslik/shared": "0.1.0",

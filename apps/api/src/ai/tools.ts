@@ -75,6 +75,21 @@ export const TOOLS: AiTool[] = [
     },
   }),
   tool({
+    name: 'list_students',
+    description: 'Aktif öğrencilerin kimlik ve adlarını listeler.',
+    kind: 'read',
+    schema: z.object({}),
+    async run(t, _i, tx) {
+      const rows = await tx
+        .select({ id: student.id, displayName: student.displayName })
+        .from(student)
+        .where(and(eq(student.workspaceId, t.workspaceId), eq(student.status, 'active')))
+        .orderBy(asc(student.displayName))
+        .limit(1000);
+      return { changes: [], warnings: [], result: { students: rows } };
+    },
+  }),
+  tool({
     name: 'list_groups',
     description: 'Öğretmenin gruplarını listeler.',
     kind: 'read',
@@ -96,7 +111,10 @@ export const TOOLS: AiTool[] = [
       return {
         changes: [],
         warnings: [],
-        result: lessons.map((l) => ({ id: l.id, seriesId: l.seriesId, who: l.targetName, status: l.status, when: when(new Date(l.startsAt), new Date(l.endsAt), l.timezone) })),
+        result: lessons.map((l) => {
+          const local = utcToLocal(new Date(l.startsAt), t.timezone);
+          return { id: l.id, seriesId: l.seriesId, who: l.targetName, status: l.status, when: when(new Date(l.startsAt), new Date(l.endsAt), l.timezone), date: local.date, start: local.time };
+        }),
       };
     },
   }),

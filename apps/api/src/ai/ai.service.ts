@@ -153,7 +153,8 @@ export class AiService {
       const [c] = await this.db.insert(aiConversation).values({ workspaceId: t.workspaceId, userId: t.userId, title: input.text.slice(0, 80) }).returning();
       conversationId = c!.id;
     }
-    await this.consumeQuota(t);
+    // Kural tabanlı asistan dış servise gitmez ve maliyetsizdir; aylık AI kotasından düşmez.
+    if (this.provider!.name !== 'rules') await this.consumeQuota(t);
     const userContent: Block[] = [...(await this.fileBlocks(t, input.fileIds)), { type: 'text', text: input.text }];
     await this.save(conversationId, 'user', userContent);
 
@@ -164,7 +165,7 @@ export class AiService {
     let cost = 0;
     try {
       for (let step = 0; step < MAX_STEPS; step++) {
-        const res = await this.provider!.complete({ system: systemPrompt(t), messages: await this.history(conversationId), tools: toolDefs() });
+        const res = await this.provider!.complete({ system: systemPrompt(t), messages: await this.history(conversationId), tools: toolDefs(), context: { timezone: t.timezone } });
         cost += costMicroUsd(res.model, res.usage);
         await this.save(conversationId, 'assistant', res.content);
         if (res.stopReason === 'refusal') {
@@ -299,6 +300,11 @@ export class AiService {
       const [r] = await tx.update(aiAction).set({ status: 'undone' }).where(eq(aiAction.id, actionId)).returning();
       return this.toActionDto(r!);
     });
+  }
+
+  /** İstemcinin asistan ekranını doğru göstermesi için çalışma kipi. */
+  status() {
+    return { mode: this.provider?.name ?? 'disabled' };
   }
 
   async conversations(t: TeacherCtx) {

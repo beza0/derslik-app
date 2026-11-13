@@ -2,7 +2,7 @@
 
 Bağımsız özel ders öğretmenleri için öğrenci, grup, takvim, not, ödev ve AI asistan uygulaması. Web + iOS + Android.
 
-> Canlı: **https://dersio-app.vercel.app** · Durum: çalışan ilk sürüm (API + web + Android). Ödeme test modunda; AI, API anahtarı girilene kadar kapalı. Ne bittiği ve ne kaldığı: [docs/05-gorev-listesi.md](docs/05-gorev-listesi.md).
+> Canlı: **https://dersio-app.vercel.app** · Durum: çalışan ilk sürüm (API + web + Android). Ödeme test modunda; asistan ücretsiz kural tabanlı kipte (Claude API anahtarı girilince tam AI). Ne bittiği ve ne kaldığı: [docs/05-gorev-listesi.md](docs/05-gorev-listesi.md).
 
 ## Dokümanlar
 - [Ürün gereksinimleri, rol-yetki matrisi, kabul senaryoları](docs/01-urun-gereksinimleri.md)
@@ -65,6 +65,7 @@ API testleri gerçek PostgreSQL üzerinde çalışır: `TEST_DATABASE_URL` veril
 
 ## AI ve ödeme (test kurulumu)
 - `AI_PROVIDER=fake`: deterministik, açıkça etiketli geliştirme sağlayıcısı. Üretimde başlatma reddedilir.
+- `AI_PROVIDER=rules`: **ücretsiz kural tabanlı asistan** (canlıdaki varsayılan). Dil modeli değildir; Türkçe komutları kalıplarla çözer (ders ekle/taşı/iptal, takvim, boş saat, eksik ödev, öğrenci özeti, özel not, ödev ver, yeni öğrenci) ve AI ile aynı araçları, aynı önizleme/onay akışıyla çağırır. Veri dışarı gitmez, AI kotasından düşmez. Kod: `apps/api/src/ai/rules.ts`.
 - `AI_PROVIDER=anthropic` + `ANTHROPIC_API_KEY`: gerçek Claude API. Anahtar yalnızca API sunucusunda.
 - `PAYMENT_PROVIDER=sandbox`: imzalı webhook ve sunucu doğrulamalı test akışı. Gerçek sağlayıcılar (iyzico, App Store, Google Play) hesap bilgileri gelince.
 
@@ -110,7 +111,7 @@ npx vercel deploy --prod
 ## Bilinen sınırlamalar
 - iOS bu Windows makinesinde derlenemez/simüle edilemez; App Store için yıllık ücretli Apple Developer hesabı gerekir. Ücretsiz seçenek: web uygulamasını iPhone Safari'de "Ana Ekrana Ekle".
 - Ödeme yalnızca test (sandbox) modunda; iyzico / App Store / Google Play bağlantıları hesap bilgileri gelince.
-- AI asistan canlıda `ANTHROPIC_API_KEY` girilene kadar kapalıdır; uygulamanın geri kalanı çalışır.
+- Canlıdaki asistan ücretsiz kural tabanlı kiptedir: yalnızca tanımlı komut kalıplarını anlar; belge/fotoğraf okuma, ders planı ve rapor yazma için Claude API anahtarı gerekir.
 - Hız sınırı sunucusuz örnek başına bellekte tutulur (dağıtık değil).
 - Mobilde dosyalı ödev oluşturma, cevap anahtarı ve grup üyelik önizlemesi yok (webde var). Yönetim paneli yalnızca web.
 - Veri dışa aktarma (JSON/CSV) henüz yok.

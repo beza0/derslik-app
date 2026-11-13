@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
-import type { AiActionDto, AiReplyDto } from '@derslik/shared';
+import { AI_EXAMPLES, RULES_EXAMPLES, RULES_NOTE, type AiActionDto, type AiReplyDto, type AiStatusDto } from '@derslik/shared';
 import { api, errorMessage } from '../../src/api';
 import { Alert, Badge, Button, Card, Input, Row, Screen, T, useTheme } from '../../src/ui';
 
@@ -35,6 +35,8 @@ export default function Assistant() {
   const [micError, setMicError] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<string>();
   const base = useRef('');
+  const status = useQuery({ queryKey: ['ai-status'], queryFn: () => api.get<AiStatusDto>('/ai/status'), staleTime: 5 * 60_000 });
+  const rules = status.data?.mode === 'rules';
 
   useSpeechRecognitionEvent('result', (e) => setText(base.current + (e.results[0]?.transcript ?? '')));
   useSpeechRecognitionEvent('end', () => setListening(false));
@@ -89,7 +91,14 @@ export default function Assistant() {
   return (
     <Screen title="Asistan" scroll={false}>
       <T muted size={13}>Takvimi, notları ve ödevleri değiştiren her işlem önce önizleme olarak sunulur.</T>
+      {rules && <T muted size={13}>{RULES_NOTE}</T>}
       <ScrollView style={{ maxHeight: 420 }} contentContainerStyle={{ gap: 10 }}>
+        {turns.length === 0 && (
+          <Card>
+            <T bold>Örnek komutlar</T>
+            {(rules ? RULES_EXAMPLES : AI_EXAMPLES).map((e) => <Button key={e} small title={e} onPress={() => setText(e)} />)}
+          </Card>
+        )}
         {turns.map((t, i) => (
           <View key={i} style={{ alignItems: t.role === 'user' ? 'flex-end' : 'flex-start', gap: 6 }}>
             {!!t.text && (

@@ -17,7 +17,7 @@ if (!secrets.DATABASE_URL) {
 const config = {
   NODE_ENV: 'production',
   COOKIE_SECURE: 'true',
-  AI_PROVIDER: secrets.ANTHROPIC_API_KEY ? 'anthropic' : 'disabled',
+  AI_PROVIDER: secrets.ANTHROPIC_API_KEY ? 'anthropic' : 'rules', // anahtar yoksa ücretsiz kural tabanlı asistan
   PAYMENT_PROVIDER: 'sandbox',
   ALLOW_SANDBOX_IN_PRODUCTION: 'true',
   STORAGE_DRIVER: 'db',

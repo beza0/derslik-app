@@ -39,6 +39,12 @@ export class AiController {
     return this.ai.undo(await this.access.teacher(u.id), id);
   }
 
+  @Get('status')
+  async status(@CurrentUser() u: AuthUser) {
+    await this.access.teacher(u.id);
+    return this.ai.status();
+  }
+
   @Get('conversations')
   async conversations(@CurrentUser() u: AuthUser) {
     return this.ai.conversations(await this.access.teacher(u.id));

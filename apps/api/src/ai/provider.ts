@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { AppConfig } from '../config';
+import { RulesProvider } from './rules';
 
 /** Sağlayıcıdan bağımsız mesaj/blok biçimi (Anthropic Messages API ile uyumlu JSON). */
 export type Block = Record<string, unknown> & { type: string };
@@ -19,8 +20,8 @@ export interface CompletionResult {
   model: string;
 }
 export interface AiProvider {
-  readonly name: 'anthropic' | 'fake';
-  complete(req: { system: string; messages: ChatMessage[]; tools: ToolDef[] }): Promise<CompletionResult>;
+  readonly name: 'anthropic' | 'fake' | 'rules';
+  complete(req: { system: string; messages: ChatMessage[]; tools: ToolDef[]; context?: { timezone: string } }): Promise<CompletionResult>;
 }
 
 /** Fiyat (USD / 1M token) — maliyet takibi için; yönetim panelinde toplanır. */
@@ -30,6 +31,7 @@ const PRICES: Record<string, { in: number; out: number }> = {
   'claude-haiku-5-5': { in: 0.1, out: 0.5 },
 };
 export function costMicroUsd(model: string, usage: CompletionResult['usage']): number {
+  if (model === 'rules' || model === 'fake') return 0;
   const p = PRICES[model] ?? PRICES['claude-opus-5-5']!;
   return Math.round(usage.inputTokens * p.in + usage.outputTokens * p.out);
 }
@@ -105,5 +107,6 @@ export const AI_PROVIDER = Symbol('AI_PROVIDER');
 export function createProvider(config: AppConfig): AiProvider | null {
   if (config.AI_PROVIDER === 'anthropic') return new AnthropicProvider(config);
   if (config.AI_PROVIDER === 'fake') return new FakeProvider();
+  if (config.AI_PROVIDER === 'rules') return new RulesProvider();
   return null;
 }

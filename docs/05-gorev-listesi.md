@@ -31,7 +31,7 @@ Güncelleme: 2026-11-12. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış en
 - ⛔ Üretim e-posta sağlayıcısı — hesap bekleniyor
 
 ## Faz D — Doğrulama
-- ✅ API: 78 entegrasyon/birim testi, gerçek PostgreSQL (AS-1…AS-14)
+- ✅ API: 84 entegrasyon/birim testi, gerçek PostgreSQL (AS-1…AS-14)
 - ✅ Web: tarayıcıda giriş, takvim, ders ekleme, AI önizleme/onay, öğrenci portalı, telefon görünümü
 - ✅ Android APK derlemesi (EAS, preview profili)
 - ⬜ Android emülatörde uçtan uca deneme
@@ -45,3 +45,4 @@ Güncelleme: 2026-11-12. ✅ bitti · 🔄 devam · ⬜ bekliyor · ⛔ dış en
 - ✅ Canlı: https://dersio-app.vercel.app (Vercel, Frankfurt) + Supabase PostgreSQL; migration'lar ve paketler yüklendi
 - ✅ Hatırlatma cron'u (Supabase pg_cron + Vault sırrı) çalışıyor
 - ✅ Expo projesi: @beyzaacar/dersio
+- ✅ Ücretsiz kural tabanlı asistan canlıda (`AI_PROVIDER=rules`); 6 yeni test (84 test)

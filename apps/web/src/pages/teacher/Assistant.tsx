@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bot, Check, FileText, Mic, MicOff, Send, Undo2, X } from 'lucide-react';
-import type { AiActionDto, AiReplyDto } from '@derslik/shared';
+import { AI_EXAMPLES, RULES_EXAMPLES, RULES_NOTE, type AiActionDto, type AiReplyDto, type AiStatusDto } from '@derslik/shared';
 import { api, errorMessage } from '../../api';
 import { PageHeader, StatusBadge, useToast } from '../../ui';
 import { FilePicker } from './Assignments';
@@ -27,12 +27,6 @@ type Recognition = {
 };
 const SpeechCtor = (typeof window !== 'undefined' && ((window as unknown as { SpeechRecognition?: new () => Recognition }).SpeechRecognition ?? (window as unknown as { webkitSpeechRecognition?: new () => Recognition }).webkitSpeechRecognition)) || null;
 
-const EXAMPLES = [
-  "Elif'e gelecek haftadan başlayarak dört hafta boyunca salı ve perşembe 18.00'de birer saat ders ekle.",
-  'Bu hafta hangi öğrencilerin ödevi eksik?',
-  'Gelecek hafta boş saatlerim ne?',
-  "Son dört ders notuna göre Ece'nin gelecek dersi için plan hazırla.",
-];
 
 export function Assistant() {
   const qc = useQueryClient();
@@ -44,6 +38,9 @@ export function Assistant() {
   const [files, setFiles] = useState<{ id: string; name: string }[]>([]);
   const [listening, setListening] = useState(false);
   const rec = useRef<Recognition | null>(null);
+  const status = useQuery({ queryKey: ['ai-status'], queryFn: () => api.get<AiStatusDto>('/ai/status'), staleTime: 5 * 60_000 });
+  const rules = status.data?.mode === 'rules';
+  const EXAMPLES = rules ? RULES_EXAMPLES : AI_EXAMPLES;
   const end = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // Yeni tarayıcılarda scrollIntoView Promise döndürür; efektten döndürülmemeli.
@@ -112,6 +109,7 @@ export function Assistant() {
   return (
     <>
       <PageHeader title="Asistan" subtitle="Takvimi, notları ve ödevleri değiştiren her işlem önce size önizleme olarak sunulur." />
+      {rules && <div className="card small muted" style={{ marginBottom: 12 }}>{RULES_NOTE} Ne anladığını görmek için “yardım” yazın.</div>}
       <div className="chat" aria-live="polite">
         {turns.length === 0 && (
           <div className="card stack">
@@ -171,7 +169,7 @@ export function Assistant() {
         <textarea className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Yazın veya mikrofonla söyleyin; göndermeden önce düzenleyebilirsiniz." aria-label="Mesaj" onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void send(); } }} />
         <div className="row between">
           <div className="row">
-            <FilePicker purpose="ai_input" label="Fotoğraf/PDF" onUploaded={(f) => setFiles([...files, f])} />
+            {!rules && <FilePicker purpose="ai_input" label="Fotoğraf/PDF" onUploaded={(f) => setFiles([...files, f])} />}
             {SpeechCtor ? (
               <button type="button" className={`btn sm ${listening ? 'primary' : ''}`} onClick={toggleMic} aria-pressed={listening}>
                 {listening ? <MicOff size={16} /> : <Mic size={16} />} {listening ? 'Dinleniyor…' : 'Sesle'}

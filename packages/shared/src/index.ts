@@ -13,3 +13,4 @@ export * from './schemas/billing';
 export * from './schemas/ai';
 export * from './api-client';
 export * from './i18n';
+export * from './ai-examples';
